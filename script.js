@@ -40,4 +40,4 @@ const getCountryData = function (country) {
 
 getCountryData('Nigeria');
 getCountryData('usa');
-getCountryData('Ghana');
+getCountryData('Netherlands');
