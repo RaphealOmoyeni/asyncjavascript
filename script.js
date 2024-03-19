@@ -25,6 +25,11 @@ const renderCountry = function (data, className = '') {
   countriesContainer.style.opacity = 1;
 };
 
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  countriesContainer.style.opacity = 1;
+};
+
 // const getCountryAndNeighbour = function (country) {
 //   // AJAX call country 1
 //   const request = new XMLHttpRequest();
@@ -78,10 +83,10 @@ const renderCountry = function (data, className = '') {
 //   }, 1000);
 // }, 1000);
 
-const request = fetch(
-  'https://countries-api-836d.onrender.com/countries/name/Nigeria'
-);
-console.log(request);
+// const request = fetch(
+//   'https://countries-api-836d.onrender.com/countries/name/Nigeria'
+// );
+// console.log(request);
 
 // const getCountryData = function (country) {
 //   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
@@ -93,21 +98,123 @@ console.log(request);
 //     });
 // };
 
+// const getCountryData = function (country) {
+//   // Country 1
+//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+//     .then(response => {
+//       console.log(response);
+
+//       if (!response.ok) {
+//         throw new Error(`Country not found (${response.status})`);
+//       }
+//       return response.json();
+//     })
+//     .then(data => {
+//       renderCountry(data[0]);
+//       // const neighbour = data[0].borders?.[0];
+//       const neighbour = 'fancepool';
+
+//       // Country 2
+//       return fetch(
+//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+//       );
+//     })
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error(`Country not found (${response.status})`);
+//       }
+//       return response.json();
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//       console.error(`${err}`);
+//       renderError(`Something went wrong,  ${err.message}. Try again!`);
+//     })
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
+// btn.addEventListener('click', function () {
+//   getCountryData('Germany');
+// });
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) {
+      throw new Error(`Country not found (${response.status})`);
+    }
+    return response.json();
+  });
+};
+
 const getCountryData = function (country) {
-  // Country 1
-  fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
-    .then(response => response.json())
+  // Country
+
+  getJSON(
+    `https://countries-api-836d.onrender.com/countries/name/${country}`,
+    'Country not found'
+  )
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders?.[0];
 
+      if (!neighbour) {
+        throw new Error('No neighbour found!');
+      }
+
       // Country 2
-      return fetch(
-        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+      return getJSON(
+        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`,
+        'Country not found'
       );
     })
-    .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      console.error(`${err}`);
+      renderError(`Something went wrong,  ${err.message}. Try again!`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
+};
+// btn.addEventListener('click', function () {
+//   getCountryData('USA');
+// });
+
+//////////////////////////////////////////////////////
+// Coding Challenge 1
+
+const whereAmI = function (lat, long) {
+  console.log('Where Am I?');
+  fetch(
+    `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
+  )
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Data not retrieved from API (${response.status})`);
+      }
+      // console.log(response);
+      if (response.status === 403) {
+        throw new Error(`Can't load API more than 3 times per second`);
+      }
+      // console.log(response.status);
+      return response.json();
+    })
+    .then(data => {
+      // console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}.`);
+      getCountryData(data.country);
+    })
+    .catch(err => {
+      console.log(`Something went wrong,  ${err.message}. Try again!`);
+    })
+    .finally(() => {
+      // getCountryData(data.country);
+      console.log('Thank you for using Rapheal API');
+    });
 };
 
-getCountryData('Germany');
+whereAmI(52.508, 13.381);
+// whereAmI(19.037, 72.873);
+// whereAmI(-33.933, 18.474);
+// whereAmI(-33.933, 18.474);
