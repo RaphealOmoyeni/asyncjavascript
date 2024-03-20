@@ -184,11 +184,116 @@ const getCountryData = function (country) {
 //////////////////////////////////////////////////////
 // Coding Challenge 1
 
-const whereAmI = function (lat, long) {
+// const whereAmI = function (lat, long) {
+//   console.log('Where Am I?');
+//   fetch(
+//     `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
+//   )
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error(`Data not retrieved from API (${response.status})`);
+//       }
+//       // console.log(response);
+//       if (response.status === 403) {
+//         throw new Error(`Can't load API more than 3 times per second`);
+//       }
+//       // console.log(response.status);
+//       return response.json();
+//     })
+//     .then(data => {
+//       // console.log(data);
+//       console.log(`You are in ${data.city}, ${data.country}.`);
+//       getCountryData(data.country);
+//     })
+//     .catch(err => {
+//       console.log(`Something went wrong,  ${err.message}. Try again!`);
+//     })
+//     .finally(() => {
+//       // getCountryData(data.country);
+//       console.log('Thank you for using Rapheal API');
+//     });
+// };
+
+// whereAmI(52.508, 13.381);
+// whereAmI(19.037, 72.873);
+// whereAmI(-33.933, 18.474);
+// whereAmI(-33.933, 18.474);
+
+// console.log('Test start!');
+// setTimeout(() => console.log('0 sec timer'), 0);
+// Promise.resolve('Resolved promise 1').then(res => console.log(res));
+
+// Promise.resolve('Resolved promise 2').then(res => {
+//   for (let i = 0; i < 1000000000; i++) {}
+//   console.log(res);
+// });
+// console.log('Test end!');
+
+// const lotteryPromise = new Promise(function (resolve, reject) {
+//   console.log('Lottery draw is happening, sit tight!');
+
+//   setTimeout(function () {
+//     if (Math.random() >= 0.5) {
+//       resolve('You WIN!');
+//     } else {
+//       reject(new Error('You lost your money, try again!'));
+//     }
+//   }, 2000);
+// });
+
+// lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+// // Promisifying setTimeout
+// const wait = function (seconds) {
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// wait(1)
+//   .then(() => {
+//     console.log('1 second passed');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('2 seconds passed');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('3 seconds passed');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('4 seconds passed');
+//     return wait(1);
+//   })
+//   .then(() => console.log('5 seconds passed'));
+
+// Promise.resolve('abc').then(x => console.log(x));
+// Promise.reject(new Error('Problem!')).catch(x => console.error(x));
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position),
+    //   err => reject(err)
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+// getPosition().then(pos => console.log(pos));
+
+const whereAmI = function () {
   console.log('Where Am I?');
-  fetch(
-    `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
-  )
+  getPosition()
+    .then(pos => {
+      const { latitude: lat, longitude: long } = pos.coords;
+
+      return fetch(
+        `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
+      );
+    })
     .then(response => {
       if (!response.ok) {
         throw new Error(`Data not retrieved from API (${response.status})`);
@@ -214,7 +319,4 @@ const whereAmI = function (lat, long) {
     });
 };
 
-whereAmI(52.508, 13.381);
-// whereAmI(19.037, 72.873);
-// whereAmI(-33.933, 18.474);
-// whereAmI(-33.933, 18.474);
+btn.addEventListener('click', whereAmI);
