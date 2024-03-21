@@ -2,6 +2,7 @@
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
+const imagesClass = document.querySelector('.images');
 
 ///////////////////////////////////////
 
@@ -319,4 +320,44 @@ const whereAmI = function () {
     });
 };
 
-btn.addEventListener('click', whereAmI);
+// btn.addEventListener('click', whereAmI);
+
+// Challenge #2
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+wait(3).then(() => {
+  console.log('3 second passed');
+});
+
+const createImage = function (imgPath) {
+  return (
+    new Promise(function (resolve, reject) {
+      const image1 = document.createElement('img');
+      image1.src = `${imgPath}`;
+
+      image1.addEventListener('load', function () {
+        imagesClass.append(image1);
+      });
+      // image1.style.display = 'none';
+      resolve(image1);
+    })
+      .then(res => {
+        console.log(res);
+        // res.style.display = 'none';
+      })
+      // .then(res => {
+      //   wait(2);
+      //   res.style.display = 'none';
+      // })
+      .catch(err => {
+        console.error(`Something went wrong,  ${err.message}. Try again!`);
+      })
+  );
+};
+
+createImage('img/img-1.jpg');
