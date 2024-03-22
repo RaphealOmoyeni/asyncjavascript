@@ -139,45 +139,45 @@ const renderError = function (msg) {
 //   getCountryData('Germany');
 // });
 
-const getJSON = function (url, errorMsg = 'Something went wrong') {
-  return fetch(url).then(response => {
-    if (!response.ok) {
-      throw new Error(`Country not found (${response.status})`);
-    }
-    return response.json();
-  });
-};
+// const getJSON = function (url, errorMsg = 'Something went wrong') {
+//   return fetch(url).then(response => {
+//     if (!response.ok) {
+//       throw new Error(`Country not found (${response.status})`);
+//     }
+//     return response.json();
+//   });
+// };
 
-const getCountryData = function (country) {
-  // Country
+// const getCountryData = function (country) {
+//   // Country
 
-  getJSON(
-    `https://countries-api-836d.onrender.com/countries/name/${country}`,
-    'Country not found'
-  )
-    .then(data => {
-      renderCountry(data[0]);
-      const neighbour = data[0].borders?.[0];
+//   getJSON(
+//     `https://countries-api-836d.onrender.com/countries/name/${country}`,
+//     'Country not found'
+//   )
+//     .then(data => {
+//       renderCountry(data[0]);
+//       const neighbour = data[0].borders?.[0];
 
-      if (!neighbour) {
-        throw new Error('No neighbour found!');
-      }
+//       if (!neighbour) {
+//         throw new Error('No neighbour found!');
+//       }
 
-      // Country 2
-      return getJSON(
-        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`,
-        'Country not found'
-      );
-    })
-    .then(data => renderCountry(data, 'neighbour'))
-    .catch(err => {
-      console.error(`${err}`);
-      renderError(`Something went wrong,  ${err.message}. Try again!`);
-    })
-    .finally(() => {
-      countriesContainer.style.opacity = 1;
-    });
-};
+//       // Country 2
+//       return getJSON(
+//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`,
+//         'Country not found'
+//       );
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//       console.error(`${err}`);
+//       renderError(`Something went wrong,  ${err.message}. Try again!`);
+//     })
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
 // btn.addEventListener('click', function () {
 //   getCountryData('USA');
 // });
@@ -273,91 +273,172 @@ const getCountryData = function (country) {
 // Promise.resolve('abc').then(x => console.log(x));
 // Promise.reject(new Error('Problem!')).catch(x => console.error(x));
 
+/////////////////////////////////////////
+// Promisifying the Geolocation API
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     // navigator.geolocation.getCurrentPosition(
+//     //   position => resolve(position),
+//     //   err => reject(err)
+//     // );
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+
+// getPosition().then(pos => console.log(pos));
+
+// const whereAmI = function () {
+//   console.log('Where Am I?');
+//   getPosition()
+//     .then(pos => {
+//       const { latitude: lat, longitude: long } = pos.coords;
+
+//       return fetch(
+//         `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
+//       );
+//     })
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error(`Data not retrieved from API (${response.status})`);
+//       }
+//       // console.log(response);
+//       if (response.status === 403) {
+//         throw new Error(`Can't load API more than 3 times per second`);
+//       }
+//       // console.log(response.status);
+//       return response.json();
+//     })
+//     .then(data => {
+//       // console.log(data);
+//       console.log(`You are in ${data.city}, ${data.country}.`);
+//       getCountryData(data.country);
+//     })
+//     .catch(err => {
+//       console.log(`Something went wrong,  ${err.message}. Try again!`);
+//     })
+//     .finally(() => {
+//       // getCountryData(data.country);
+//       console.log('Thank you for using Rapheal API');
+//     });
+// };
+
+// btn.addEventListener('click', whereAmI);
+
+/////////////////////////////////////////////////
+// Challenge #2
+
+// const wait = function (seconds) {
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// // wait(3).then(() => {
+// //   console.log('3 second passed');
+// // });
+
+// const createImage = function (imgPath) {
+//   return new Promise(function (resolve, reject) {
+//     const image1 = document.createElement('img');
+//     image1.src = imgPath;
+//     image1.addEventListener('load', function () {
+//       imagesClass.append(image1);
+//       btn.style.display = 'none';
+//       resolve(image1);
+//     });
+//     image1.addEventListener('error', function () {
+//       reject(new Error('Image not retrieved from source'));
+//     });
+//   }).catch(err => {
+//     console.error(`Something went wrong,  ${err.message}. Try again!`);
+//   });
+// };
+
+// let currentImage;
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImage = img;
+//     console.log('Image 1 shown');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImage.style.display = 'none';
+//     btn.style.display = 'block';
+//     console.log('Image 1 disappeared');
+//     return createImage('img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImage = img;
+//     console.log('Image 2 shown');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImage.style.display = 'none';
+//     btn.style.display = 'block';
+//     console.log('Image 2 disappeared');
+//   })
+//   .catch(err => console.error(err.message));
+
+///////////////////////////////////////
+// Consuming Promises with Async/Await
+
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
-    // navigator.geolocation.getCurrentPosition(
-    //   position => resolve(position),
-    //   err => reject(err)
-    // );
     navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
 
-// getPosition().then(pos => console.log(pos));
+// fetch(
+//   `https://countries-api-836d.onrender.com/countries/name/${country}`
+// ).then(res => console.log(res));
 
-const whereAmI = function () {
-  console.log('Where Am I?');
-  getPosition()
-    .then(pos => {
-      const { latitude: lat, longitude: long } = pos.coords;
+const whereAmI = async function () {
+  try {
+    // Geolocation
+    const pos = await getPosition();
+    const { latitude: lat, longitude: long } = pos.coords;
 
-      return fetch(
-        `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
-      );
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Data not retrieved from API (${response.status})`);
-      }
-      // console.log(response);
-      if (response.status === 403) {
-        throw new Error(`Can't load API more than 3 times per second`);
-      }
-      // console.log(response.status);
-      return response.json();
-    })
-    .then(data => {
-      // console.log(data);
-      console.log(`You are in ${data.city}, ${data.country}.`);
-      getCountryData(data.country);
-    })
-    .catch(err => {
-      console.log(`Something went wrong,  ${err.message}. Try again!`);
-    })
-    .finally(() => {
-      // getCountryData(data.country);
-      console.log('Thank you for using Rapheal API');
-    });
+    // Reverse geocoding
+    const resGeo = await fetch(
+      `https://geocode.xyz/${lat},${long}?geoit=json&auth=232862416608636259384x87855`
+    );
+    if (!resGeo.ok) {
+      throw new Error('Problem getting location data');
+    }
+    const dataGeo = await resGeo.json();
+    // console.log(dataGeo);
+
+    // Country data
+    const res = await fetch(
+      `https://countries-api-836d.onrender.com/countries/name/${dataGeo.country}`
+    );
+    if (!res.ok) {
+      throw new Error('Problem getting location country');
+    }
+    const data = await res.json();
+    // console.log(data);
+    renderCountry(data[0]);
+    btn.style.display = 'none';
+  } catch {
+    console.error(err);
+    renderError(`Something went wrong ${err.message}`);
+  }
 };
 
-// btn.addEventListener('click', whereAmI);
+whereAmI();
+// console.log('FIRST');
 
-// Challenge #2
-
-const wait = function (seconds) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, seconds * 1000);
-  });
+// try {
+//   let y = 1;
+//   const x = 2;
+//   y = 3;
+// } catch (err) {
+//   alert(err.message);
+// }
+const generateAdvice = async function () {
+  const res = await fetch(`https://api.adviceslip.com/advice`);
+  const adviceData = await res.json();
+  console.log(adviceData.slip.advice);
 };
 
-wait(3).then(() => {
-  console.log('3 second passed');
-});
-
-const createImage = function (imgPath) {
-  return (
-    new Promise(function (resolve, reject) {
-      const image1 = document.createElement('img');
-      image1.src = `${imgPath}`;
-
-      image1.addEventListener('load', function () {
-        imagesClass.append(image1);
-      });
-      // image1.style.display = 'none';
-      resolve(image1);
-    })
-      .then(res => {
-        console.log(res);
-        // res.style.display = 'none';
-      })
-      // .then(res => {
-      //   wait(2);
-      //   res.style.display = 'none';
-      // })
-      .catch(err => {
-        console.error(`Something went wrong,  ${err.message}. Try again!`);
-      })
-  );
-};
-
-createImage('img/img-1.jpg');
+generateAdvice();
