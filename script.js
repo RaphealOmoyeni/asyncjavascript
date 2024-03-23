@@ -420,6 +420,7 @@ const whereAmI = async function () {
     renderCountry(data[0]);
     btn.style.display = 'none';
   } catch {
+    err;
     console.error(err);
     renderError(`Something went wrong ${err.message}`);
   }
@@ -435,10 +436,10 @@ whereAmI();
 // } catch (err) {
 //   alert(err.message);
 // }
-const generateAdvice = async function () {
-  const res = await fetch(`https://api.adviceslip.com/advice`);
-  const adviceData = await res.json();
-  console.log(adviceData.slip.advice);
-};
+// const generateAdvice = async function () {
+//   const res = await fetch(`https://api.adviceslip.com/advice`);
+//   const adviceData = await res.json();
+//   console.log(adviceData.slip.advice);
+// };
 
-generateAdvice();
+// generateAdvice();
