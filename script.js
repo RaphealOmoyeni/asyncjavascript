@@ -327,57 +327,57 @@ const renderError = function (msg) {
 /////////////////////////////////////////////////
 // Challenge #2
 
-// const wait = function (seconds) {
-//   return new Promise(function (resolve) {
-//     setTimeout(resolve, seconds * 1000);
-//   });
-// };
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
 
-// // wait(3).then(() => {
-// //   console.log('3 second passed');
-// // });
+// wait(3).then(() => {
+//   console.log('3 second passed');
+// });
 
-// const createImage = function (imgPath) {
-//   return new Promise(function (resolve, reject) {
-//     const image1 = document.createElement('img');
-//     image1.src = imgPath;
-//     image1.addEventListener('load', function () {
-//       imagesClass.append(image1);
-//       btn.style.display = 'none';
-//       resolve(image1);
-//     });
-//     image1.addEventListener('error', function () {
-//       reject(new Error('Image not retrieved from source'));
-//     });
-//   }).catch(err => {
-//     console.error(`Something went wrong,  ${err.message}. Try again!`);
-//   });
-// };
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const image1 = document.createElement('img');
+    image1.src = imgPath;
+    image1.addEventListener('load', function () {
+      imagesClass.append(image1);
+      btn.style.display = 'none';
+      resolve(image1);
+    });
+    image1.addEventListener('error', function () {
+      reject(new Error('Image not retrieved from source'));
+    });
+  }).catch(err => {
+    console.error(`Something went wrong,  ${err.message}. Try again!`);
+  });
+};
 
-// let currentImage;
-// createImage('img/img-1.jpg')
-//   .then(img => {
-//     currentImage = img;
-//     console.log('Image 1 shown');
-//     return wait(2);
-//   })
-//   .then(() => {
-//     currentImage.style.display = 'none';
-//     btn.style.display = 'block';
-//     console.log('Image 1 disappeared');
-//     return createImage('img/img-2.jpg');
-//   })
-//   .then(img => {
-//     currentImage = img;
-//     console.log('Image 2 shown');
-//     return wait(2);
-//   })
-//   .then(() => {
-//     currentImage.style.display = 'none';
-//     btn.style.display = 'block';
-//     console.log('Image 2 disappeared');
-//   })
-//   .catch(err => console.error(err.message));
+let currentImage;
+createImage('img/img-1.jpg')
+  .then(img => {
+    currentImage = img;
+    console.log('Image 1 shown');
+    return wait(2);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+    btn.style.display = 'block';
+    console.log('Image 1 disappeared');
+    return createImage('img/img-2.jpg');
+  })
+  .then(img => {
+    currentImage = img;
+    console.log('Image 2 shown');
+    return wait(2);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+    btn.style.display = 'block';
+    console.log('Image 2 disappeared');
+  })
+  .catch(err => console.error(err.message));
 
 ///////////////////////////////////////
 // Consuming Promises with Async/Await
