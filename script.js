@@ -327,32 +327,32 @@ const getJSON = function (url, errorMsg = 'Something went wrong') {
 /////////////////////////////////////////////////
 // Challenge #2
 
-// const wait = function (seconds) {
-//   return new Promise(function (resolve) {
-//     setTimeout(resolve, seconds * 1000);
-//   });
-// };
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
 
-// // wait(3).then(() => {
-// //   console.log('3 second passed');
-// // });
+// wait(3).then(() => {
+//   console.log('3 second passed');
+// });
 
-// const createImage = function (imgPath) {
-//   return new Promise(function (resolve, reject) {
-//     const image1 = document.createElement('img');
-//     image1.src = imgPath;
-//     image1.addEventListener('load', function () {
-//       imagesClass.append(image1);
-//       btn.style.display = 'none';
-//       resolve(image1);
-//     });
-//     image1.addEventListener('error', function () {
-//       reject(new Error('Image not retrieved from source'));
-//     });
-//   }).catch(err => {
-//     console.error(`Something went wrong,  ${err.message}. Try again!`);
-//   });
-// };
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const image1 = document.createElement('img');
+    image1.src = imgPath;
+    image1.addEventListener('load', function () {
+      imagesClass.append(image1);
+      btn.style.display = 'none';
+      resolve(image1);
+    });
+    image1.addEventListener('error', function () {
+      reject(new Error('Image not retrieved from source'));
+    });
+  }).catch(err => {
+    console.error(`Something went wrong,  ${err.message}. Try again!`);
+  });
+};
 
 // let currentImage;
 // createImage('img/img-1.jpg')
@@ -534,3 +534,49 @@ const whereAmI = async function () {
 // ])
 //   .then(res => console.log(res))
 //   .catch(err => console.error(err));
+
+/////////////////////////////////////////////////
+//////////////// Challenge 3 ///////////////////
+// Part 1
+
+// let currentImage;
+
+// const loadNPause = async function () {
+//   try {
+//     currentImage = await createImage('img/img-1.jpg');
+//     console.log('Image 1 shown');
+//     await wait(2);
+
+//     currentImage.style.display = 'none';
+
+//     btn.style.display = 'block';
+//     console.log('Image 1 disappeared');
+//     await wait(2);
+//     currentImage = await createImage('img/img-2.jpg');
+//     console.log('Image 2 shown');
+//     await wait(2);
+//     currentImage.style.display = 'none';
+//     btn.style.display = 'block';
+//     console.log('Image 2 disappeared');
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// };
+
+// loadNPause();
+
+// Part 2
+
+const loadAll = async function (imgArr) {
+  try {
+    const imgs = imgArr.map(async img => await createImage(img));
+    console.log(imgs);
+    const dataNew = await Promise.all(imgs);
+    console.log(dataNew);
+    dataNew.forEach(img => img.classList.add('parallel'));
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
